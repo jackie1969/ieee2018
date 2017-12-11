@@ -1,0 +1,29 @@
+{
+  "name": "ieee",
+  "version": "1.0.0",
+  "description": "project for ieee",
+  "main": "index.js",
+  "scripts": {
+    "test": "mean stack"
+  },
+  "keywords": [
+    "mean",
+    "stack"
+  ],
+  "author": "signup/login",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^1.0.3",
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "jsonwebtoken": "^8.1.0",
+    "mongodb": "^3.0.0-rc0",
+    "mongoose": "^4.13.6",
+    "mongose": "0.0.2-security",
+    "morgan": "^1.9.0",
+    "nodemailer": "^4.4.1",
+    "nodemailer-sendgrid-transport": "^0.2.0",
+    "zoho": "^0.5.0"
+  }
+}
