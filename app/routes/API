@@ -1,0 +1,187 @@
+var User = require('../models/users');
+var jwt = require('jsonwebtoken');
+var nodemailer = require('nodemailer');
+//var zoho = require('zoho');
+
+
+
+module.exports = function(router){
+   
+  var client = nodemailer.createTransport({
+        service: 'zoho',
+        auth: {
+               user:'cruiserweights@zoho.com',
+                pass: 'PAssword123!@#'
+              },
+        tls: {rejectUnauthorized:false}
+    });
+    //email provider service
+    
+    //user registration-route
+    router.post('/users',function(req,res){
+        var user = new User();
+        user.username = req.body.username;
+        user.password = req.body.password;
+        user.email = req.body.email;
+        user.temporaryToken = jwt.sign({username: user.username, email: user.email},'test',{expiresIn: '24h'});
+       if(req.body.username == null || req.body.username == ' '||req.body.password == null || req.body.password == ' '||req.body.email == null || req.body.email == '')
+           {
+               res.json({success: false, message: "Please provide username, email or password" });
+           }
+        else
+            {
+                user.save(function(err){
+                    if(err)
+                       {
+                            res.json({success: false, message: "Username/email already existed" });
+                        }
+                    else
+                        {
+                            
+                            
+                            
+
+                            var email = {
+                              from: 'example@localhost.com',
+                              to: user.email,
+                              subject: 'Hello',
+                              text:'hello user, please click on the following link below to confirm the email : <a>http://localhost:8080/activate/'+user.temporaryToken,
+                              html: 'hello user, please click on the following link below to confirm the email : <a>http://localhost:8080/activate/'+user.temporaryToken
+                                    
+                            };
+
+                            client.sendMail(email, function(err, info){
+                                if (err ){
+                                  console.log(err);
+                                }
+                                else {
+                                  console.log('Message sent: ' + info.response);
+                                }
+                            });
+    
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                            
+                           res.json({success: true, message: "User created,please check your email" });
+                        }
+                }); //save username and password to database
+            }
+
+    });
+    //user login route
+    router.post('/authenticate',function(req,res){
+       User.findOne({ username: req.body.username}).select('email username password').exec(function(err,user){
+           if(err) throw err;
+           
+           if(!user)
+           {
+               res.json({success: false, message: "cannot find user" });
+               
+           }
+           else if(user)
+               {
+                   var valid = user.checkPass(req.body.password);
+                   if(!valid)
+                       {
+                          res.json({success: false, message: "cannot authenticate password" });
+                       }
+                   else{
+                        var token = jwt.sign({username: user.username, email: user.email},'test',{expiresIn: '24h'});
+                       res.json({success: true, message: "successfully authenticated",token: token});
+                   }
+               }
+       });
+    });
+    router.put('/activate/:token',function(req,res){
+        User.findOne({ temporaryToken: req.params.token},function(err,user){
+            if(err) throw err;
+            var token = req.params.token;
+            
+            
+        jwt.verify(token,'test',function(err,decode){
+            if(err)  res.json({success: false, message: "Activation link has expired"})
+            
+            else if(!user)
+                {
+                    res.json({success: false, message: "Activation link has expired"})
+                }
+            
+            else{
+                
+                user.temporaryToken = false;
+                user.active = true;
+                user.save(function(){
+                    if(err)
+                        {
+                            console.log(err);
+                        }
+                    else{
+                        var email = {
+                              from: 'example@localhost.com',
+                              to: user.email,
+                              subject: 'Account activated',
+                              text:'hello user, please click on the following link below to confirm the email : <a>http://localhost:8080/activate/'+user.temporaryToken,
+                              html: 'hello user, please click on the following link below to confirm the email : <a>http://localhost:8080/activate/'+user.temporaryToken
+                                    
+                            };
+
+                            client.sendMail(email, function(err, info){
+                                if (err ){
+                                  console.log(err);
+                                }
+                                else {
+                                  console.log('Message sent: ' + info.response);
+                                }
+                            });
+    
+                        
+                        
+                        
+                        
+                        
+                        
+                         res.json({success: true,message: "Account activated"})
+                    }
+                })
+                
+               
+            }
+        });
+            
+            
+            
+            
+            
+        })
+    })
+    
+    router.use(function(req,res,next){
+        var token = req.body.token || req.body.query || req.body.headers['x-access-token'];
+       
+        if(token)
+            {
+                jwt.verify(token, 'test', function(err, decoded) {
+                
+                    if(err) res.json({success: false, message: "Token invalid"})
+                
+                    else{
+                        req.decoded = decoded;
+                        next()
+                    }
+                });
+            }
+        else{
+            resjson({success: false, message: "No token found"})
+        }
+    });
+
+    
+    return router;
+}
+
+
