@@ -1,0 +1,7 @@
+morgan 
+mongoose
+bcrypt
+body-parser
+nodemailer
+zaho
+
