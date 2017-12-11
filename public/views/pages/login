@@ -1,0 +1,27 @@
+<div class="container">
+    <div class="jumbotron">
+        <h1 class="display-3">Login</h1>
+    </div>
+</div>
+
+<div class = container>
+    <form ng-submit = "login.login(logData)">
+         <div class="form-group">
+            <label for="Username">Username</label>
+            <input type="text" class="form-control" placeholder="Username" name="username" ng-model="login.logData.username">
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="text" class="form-control" placeholder="Password" name="password" ng-model="login.logData.password">
+          </div>
+          <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+     <br>
+    <div class = "row show-hide-message" ng-show = "login.successMsg">
+        <div class = "alert alert-success">{{ login.successMsg }}</div>
+    </div>
+    <br>
+     <div class = "row show-hide-message" ng-show = "login.errorMsg">
+        <div class = "alert alert-danger">{{ login.errorMsg }}</div>
+    </div>
+</div>
