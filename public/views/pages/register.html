@@ -1,0 +1,31 @@
+<div class="container">
+    <div class="jumbotron">
+        <h1 class="display-3">Registration</h1>
+    </div>
+</div>
+
+<div class = container>
+    <form ng-submit = "register.reg(regData)">
+        <div class="form-group">
+            <label for="email">Email address</label>
+            <input type="email" class="form-control" placeholder="Enter email" name="email" ng-model="register.regData.email">
+          </div>
+         <div class="form-group">
+            <label for="Username">Username</label>
+            <input type="text" class="form-control" placeholder="Username" name="username" ng-model="register.regData.username">
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="text" class="form-control" placeholder="Password" name="password" ng-model="register.regData.password">
+          </div>
+          <button type="submit" class="btn btn-primary">Register</button>
+    </form>
+    <br>
+    <div class = "row show-hide-message" ng-show = "register.successMsg">
+        <div class = "alert alert-success">{{ register.successMsg }}</div>
+    </div>
+    <br>
+     <div class = "row show-hide-message" ng-show = "register.errorMsg">
+        <div class = "alert alert-danger">{{ register.errorMsg }}</div>
+    </div>
+</div>
